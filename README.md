@@ -1,42 +1,39 @@
-# Redis Clone
+# redis-clone
 
-This is a simple implementation of a Redis clone written in Python.
-It is not meant to be a fully-featured Redis server, but rather a demonstration of how the Redis protocol works.
-I developed it following the challenge on the wonderful website [CodeCrafters](https://codecrafters.io/).
+A small Redis clone built with Python.
 
-## Features
+This module provides a basic implementation of a Redis server, supporting
+core functionalities like:
 
-The following Redis commands are implemented:
+-   String storage (SET, GET, MSET, MGET, DEL)
+-   Key patterns (KEYS)
+-   Database selection (SELECT)
+-   Basic commands (ECHO, PING)
+-   Data persistence to JSON file
 
-- `PING`: Sends a `PONG` response to the client.
-- `ECHO`: Echoes back the provided argument to the client.
-- `SET`: Sets a key-value pair in the database. Optionally takes a `px` argument to set an expiry time in milliseconds.
-- `GET`: Gets the value of a key from the database. If the key has an expiry time set and it has passed, the key-value pair is deleted and `-1` is returned to the client.
+It uses a custom RESP (Redis Serialization Protocol) decoder and encoder.
 
-## Running the Server
+## Usage
 
-To run the server, simply execute the following command (it requires Python 3):
+The `redis_clone.py` script can be executed from the command line with several
+options:
 
-```
-./redis-clone
-```
+        python redis_clone.py [-h] [-n N_DBS] [-i INTERVAL] [-f FILE] [-p PORT]
 
-The server will listen on `localhost:6379` for incoming connections.
+*   `-h, --help`: Show the help message and exit.
+*   `-n N_DBS, --n-dbs N_DBS`: Number of databases to initialize (default: 8).
+*   `-i INTERVAL, --interval INTERVAL`: Dump interval in seconds (default: 300).
+*   `-f FILE, --file FILE`: File to dump and load the databases from (default: databases.json).
+*   `-p PORT, --port PORT`: Port number for the server to listen on (default: 6379).
 
-## Connecting to the Server
+## Example
 
-You can use any Redis client to connect to the server. For example, to connect to the server using `redis-cli`, run the following command:
+To start the server on port `7000` with `10` databases, a `120` second dump
+interval and `mydata.json` as dump file, run:
 
-```
-redis-cli -h localhost -p 6379
-```
+    python redis_clone.py -p 7000 -n 10 -i 120 -f mydata.json
 
-You should then see a `127.0.0.1:6379>` prompt, where you can enter Redis commands as you would with a regular Redis server.
-
-## Limitations
-
-This Redis clone has several limitations compared to a real Redis server:
-
-- Only a limited set of commands are implemented.
-- The database is not persisted to disk, so all data is lost when the server is stopped.
-- There is no support for multiple databases or authentication.
+Note:
+    *   The server listens on `localhost` and the specified `PORT`.
+    *   Data is loaded from and periodically dumped to the file.
+    *   The server does not handle concurrent connections.
